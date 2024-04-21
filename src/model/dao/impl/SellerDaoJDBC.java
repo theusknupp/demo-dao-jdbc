@@ -50,16 +50,8 @@ public class SellerDaoJDBC implements SellerDao{
 			st.setInt(1, id); //Valor que vai para "?"
 			rs = st.executeQuery();
 			if (rs.next()) { //testando se veio algum resultado
-				Department dep = new Department();
-				dep.setId(rs.getInt("DepartmentId"));
-				dep.setName(rs.getString("DepName"));
-				Seller obj = new Seller();
-				obj.setId(rs.getInt("Id"));
-				obj.setName(rs.getString("Name"));
-				obj.setEmail(rs.getString("Email"));
-				obj.setBaseSalary(rs.getDouble("BaseSalary"));
-				obj.setBirthDate(rs.getDate("BirthDate"));
-				obj.setDepartment(dep);
+				Department dep = instantiateDepartment(rs); //Chamando função de instanciação do departamento
+				Seller obj = instantiateSeller(rs, dep); //Chamando função de instanciação de vendedor
 				return obj;
 				
 			}
@@ -71,6 +63,24 @@ public class SellerDaoJDBC implements SellerDao{
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}		
+	}
+ 
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException { //Ja esta tratando exceção na chamada da função
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));
+		obj.setName(rs.getString("Name"));
+		obj.setEmail(rs.getString("Email"));
+		obj.setBaseSalary(rs.getDouble("BaseSalary"));
+		obj.setBirthDate(rs.getDate("BirthDate"));
+		obj.setDepartment(dep);
+		return obj;
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException { //Ja está tratando exceção na chamada da função
+		Department dep = new Department();
+		dep.setId(rs.getInt("DepartmentId"));
+		dep.setName(rs.getString("DepName"));
+		return dep;
 	}
 
 	@Override
